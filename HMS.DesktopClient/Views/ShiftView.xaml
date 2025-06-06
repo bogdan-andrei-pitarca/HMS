@@ -48,10 +48,6 @@
                 <TextBlock Text="End Time:" Width="80" VerticalAlignment="Center"/>
                 <TextBox PlaceholderText="HH:mm" Width="100" Text="{Binding InputShiftEndTimeString, Mode=TwoWay}"/>
             </StackPanel>
-             <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
-                <TextBlock Text="Doctor IDs (comma-separated):" Width="180" VerticalAlignment="Center"/>
-                <TextBox PlaceholderText="e.g., 1, 5, 10" Width="200" Text="{Binding InputShiftDoctorIdsString, Mode=TwoWay}"/>
-            </StackPanel>
 
             <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
                 <Button Content="Add Shift" Command="{Binding AddShiftCommand}" Margin="0,0,10,0"/>

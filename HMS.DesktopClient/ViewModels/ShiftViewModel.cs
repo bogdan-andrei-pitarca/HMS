@@ -77,22 +77,6 @@ namespace HMS.DesktopClient.ViewModels
             }
         }
 
-        private string _inputShiftDoctorIdsString = string.Empty;
-        public string InputShiftDoctorIdsString
-        {
-            get => _inputShiftDoctorIdsString;
-            set
-            {
-                if (_inputShiftDoctorIdsString != value)
-                {
-                    _inputShiftDoctorIdsString = value;
-                    OnPropertyChanged(nameof(InputShiftDoctorIdsString));
-                    AddShiftCommand.RaiseCanExecuteChanged();
-                    UpdateShiftCommand.RaiseCanExecuteChanged();
-                }
-            }
-        }
-
         private ShiftDto? _selectedShift;
         public ShiftDto? SelectedShift
         {
@@ -108,7 +92,6 @@ namespace HMS.DesktopClient.ViewModels
                         InputShiftDate = new DateTimeOffset(_selectedShift.Date.ToDateTime(TimeOnly.MinValue));
                         InputShiftStartTimeString = _selectedShift.StartTime.ToString("HH:mm");
                         InputShiftEndTimeString = _selectedShift.EndTime.ToString("HH:mm");
-                        InputShiftDoctorIdsString = string.Join(", ", _selectedShift.DoctorIds);
                     }
                     else
                     {
@@ -119,8 +102,6 @@ namespace HMS.DesktopClient.ViewModels
                 }
             }
         }
-
-        public string FormattedDoctorIds => SelectedShift?.FormattedDoctorIds ?? "None";
 
         public RelayCommand AddShiftCommand { get; }
         public RelayCommand UpdateShiftCommand { get; }
@@ -153,7 +134,6 @@ namespace HMS.DesktopClient.ViewModels
             InputShiftDate = null;
             InputShiftStartTimeString = string.Empty;
             InputShiftEndTimeString = string.Empty;
-            InputShiftDoctorIdsString = string.Empty;
         }
 
         public async Task LoadShiftsAsync()
@@ -189,21 +169,12 @@ namespace HMS.DesktopClient.ViewModels
                 TimeOnly startTime = TimeOnly.ParseExact(InputShiftStartTimeString, "HH:mm", CultureInfo.InvariantCulture);
                 TimeOnly endTime = TimeOnly.ParseExact(InputShiftEndTimeString, "HH:mm", CultureInfo.InvariantCulture);
 
-                var doctorIds = new List<int>();
-                if (!string.IsNullOrWhiteSpace(InputShiftDoctorIdsString))
-                {
-                    doctorIds = InputShiftDoctorIdsString.Split(',')
-                                                        .Select(idStr => int.TryParse(idStr.Trim(), out int id) ? id : -1)
-                                                        .Where(id => id != -1)
-                                                        .ToList();
-                }
-
                 var newShift = new ShiftDto
                 {
                     Date = date,
                     StartTime = startTime,
                     EndTime = endTime,
-                    DoctorIds = doctorIds
+                    DoctorIds = new List<int>() // Initialize with empty list
                 };
 
                 var addedShift = await _shiftProxy.AddAsync(newShift);
@@ -225,6 +196,11 @@ namespace HMS.DesktopClient.ViewModels
             if (!CanUpdateDeleteShift() || SelectedShift == null) return;
             try
             {
+                // Update the selected shift with new values
+                SelectedShift.Date = DateOnly.FromDateTime(InputShiftDate!.Value.Date);
+                SelectedShift.StartTime = TimeOnly.ParseExact(InputShiftStartTimeString, "HH:mm", CultureInfo.InvariantCulture);
+                SelectedShift.EndTime = TimeOnly.ParseExact(InputShiftEndTimeString, "HH:mm", CultureInfo.InvariantCulture);
+
                 bool success = await _shiftProxy.UpdateAsync(SelectedShift);
 
                 if (success)
@@ -251,8 +227,7 @@ namespace HMS.DesktopClient.ViewModels
             if (!CanUpdateDeleteShift() || SelectedShift == null) return;
             try
             {
-                int shiftIdToDelete = SelectedShift.Id;
-                bool success = await _shiftProxy.DeleteAsync(shiftIdToDelete);
+                bool success = await _shiftProxy.DeleteAsync(SelectedShift.Id);
 
                 if (success)
                 {
@@ -261,7 +236,7 @@ namespace HMS.DesktopClient.ViewModels
                 }
                 else
                 {
-                    Console.WriteLine($"Deletion failed for shift {shiftIdToDelete} on backend.");
+                    Console.WriteLine($"Delete failed for shift with ID {SelectedShift.Id} on backend.");
                 }
             }
             catch (HttpRequestException httpEx)

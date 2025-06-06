@@ -31,7 +31,7 @@ namespace HMS.DesktopClient.Views
             // Load shifts directly after setting DataContext
             _ = viewModel.LoadShiftsAsync();
 
-            // NoAccessMessage visibility handled based on UserRole within the viewmodel or XAML binding
+            // NoAccessMessage visibility handled based on UserRole within the viewmodel or XAML binding.
         }
     }
 } 

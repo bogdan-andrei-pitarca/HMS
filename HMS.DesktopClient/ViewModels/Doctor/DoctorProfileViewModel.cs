@@ -10,14 +10,25 @@ using System.Threading.Tasks;
 
 namespace HMS.DesktopClient.ViewModels.Doctor
 {
+    /// <summary>
+    /// View model for the doctor profile screen that provides doctor information and editing capabilities.
+    /// </summary>
     public class DoctorProfileViewModel
     {
         private readonly UserWithTokenDto _user;
         private DoctorDto _doctor;
         private readonly DoctorService _doctorService;
 
+        /// <summary>
+        /// Event that is fired when a property value changes.
+        /// </summary>
         public event PropertyChangedEventHandler? PropertyChanged;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DoctorProfileViewModel"/> class.
+        /// </summary>
+        /// <param name="user">The authenticated user with token.</param>
+        /// <param name="doctor">The doctor data to display and edit.</param>
         public DoctorProfileViewModel(UserWithTokenDto user, DoctorDto doctor)
         {
             _user = user;
@@ -27,7 +38,9 @@ namespace HMS.DesktopClient.ViewModels.Doctor
             _doctorService = new DoctorService(proxy);
         }
 
-        // Common user fields
+        /// <summary>
+        /// Gets or sets the name of the doctor.
+        /// </summary>
         public string Name
         {
             get => _doctor.Name;
@@ -41,6 +54,9 @@ namespace HMS.DesktopClient.ViewModels.Doctor
             }
         }
 
+        /// <summary>
+        /// Gets or sets the phone number of the doctor.
+        /// </summary>
         public string PhoneNumber
         {
             get => _doctor.PhoneNumber;
@@ -54,6 +70,9 @@ namespace HMS.DesktopClient.ViewModels.Doctor
             }
         }
 
+        /// <summary>
+        /// Gets or sets the CNP (Personal Numeric Code) of the doctor.
+        /// </summary>
         public string CNP
         {
             get => _doctor.CNP;
@@ -67,7 +86,9 @@ namespace HMS.DesktopClient.ViewModels.Doctor
             }
         }
 
-        // Doctor-specific fields
+        /// <summary>
+        /// Gets or sets the department ID where the doctor works.
+        /// </summary>
         public int DepartmentId
         {
             get => _doctor.DepartmentId;
@@ -81,6 +102,9 @@ namespace HMS.DesktopClient.ViewModels.Doctor
             }
         }
 
+        /// <summary>
+        /// Gets or sets the name of the department where the doctor works.
+        /// </summary>
         public string DepartmentName
         {
             get => _doctor.DepartmentName;
@@ -94,6 +118,9 @@ namespace HMS.DesktopClient.ViewModels.Doctor
             }
         }
 
+        /// <summary>
+        /// Gets or sets the number of years of experience the doctor has.
+        /// </summary>
         public int YearsOfExperience
         {
             get => _doctor.YearsOfExperience;
@@ -107,6 +134,9 @@ namespace HMS.DesktopClient.ViewModels.Doctor
             }
         }
 
+        /// <summary>
+        /// Gets or sets the license number of the doctor.
+        /// </summary>
         public string LicenseNumber
         {
             get => _doctor.LicenseNumber;
@@ -121,14 +151,35 @@ namespace HMS.DesktopClient.ViewModels.Doctor
         }
 
         // Read-only
+        /// <summary>
+        /// Gets the unique identifier of the doctor.
+        /// </summary>
         public int Id => _doctor.Id;
+
+        /// <summary>
+        /// Gets the email address of the doctor.
+        /// </summary>
         public string Email => _doctor.Email;
+
+        /// <summary>
+        /// Gets the role of the user (doctor) in the system.
+        /// </summary>
         public string Role => _doctor.Role.ToString();
+
+        /// <summary>
+        /// Gets the account creation date and time of the doctor.
+        /// </summary>
         public string CreatedAt => _doctor.CreatedAt.ToString("yyyy-MM-dd HH:mm");
 
+        /// <summary>
+        /// Gets the authentication token of the user.
+        /// </summary>
         public string Token => _user.Token;
 
-        // Update
+        /// <summary>
+        /// Updates the doctor information asynchronously.
+        /// </summary>
+        /// <returns>A task that represents the asynchronous update operation. The task result contains a boolean value indicating whether the update was successful.</returns>
         public async Task<bool> UpdateDoctorAsync()
         {
             return await _doctorService.UpdateDoctorAsync(_doctor);

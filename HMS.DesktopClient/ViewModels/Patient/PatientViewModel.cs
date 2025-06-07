@@ -11,24 +11,77 @@ using HMS.Shared.Services;
 
 namespace HMS.DesktopClient.ViewModels.Patient
 {
+    /// <summary>
+    /// View model that provides patient data and functionality for listing and managing patients.
+    /// </summary>
+    /// <remarks>
+    /// This view model handles loading patients based on the current user's role.
+    /// For doctors, it loads only patients associated with their appointments.
+    /// For administrators, it loads all patients in the system.
+    /// </remarks>
     public class PatientViewModel : INotifyPropertyChanged
     {
+        /// <summary>
+        /// Event raised when a property value changes.
+        /// </summary>
         public event PropertyChangedEventHandler? PropertyChanged;
+        
+        /// <summary>
+        /// The service used to retrieve and manage patient data.
+        /// </summary>
+        /// <remarks>
+        /// This service communicates with the patient-related API endpoints.
+        /// </remarks>
         private PatientService PatientService;
+        
+        /// <summary>
+        /// The service used to retrieve appointment data.
+        /// </summary>
+        /// <remarks>
+        /// This service is used to find appointments associated with a doctor
+        /// to determine which patients they should see.
+        /// </remarks>
         private AppointmentService AppointmentService;
+        
+        /// <summary>
+        /// The collection of patients to display in the UI.
+        /// </summary>
         private ObservableCollection<PatientDto> _patients;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="PatientViewModel"/> class.
+        /// </summary>
+        /// <param name="patientService">The service used to retrieve and manage patient data.</param>
+        /// <param name="appointmentService">The service used to retrieve appointment data.</param>
+        /// <remarks>
+        /// This constructor initializes the services required for patient data management.
+        /// </remarks>
         public PatientViewModel(PatientService patientService, AppointmentService appointmentService)
         {
             PatientService = patientService;
             AppointmentService = appointmentService;
         }
 
+        /// <summary>
+        /// Initializes the view model by loading the appropriate patient data.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <remarks>
+        /// This method should be called when the view is first loaded to populate
+        /// the patients collection.
+        /// </remarks>
         public async Task InitializeAsync()
         {
             await LoadPatientsAsync();
         }
 
+        /// <summary>
+        /// Gets or sets the collection of patients to display in the UI.
+        /// </summary>
+        /// <remarks>
+        /// This observable collection is bound to UI elements and automatically
+        /// notifies them when patients are added, removed, or modified.
+        /// </remarks>
         public ObservableCollection<PatientDto> Patients
         {
             get => _patients;
@@ -39,7 +92,14 @@ namespace HMS.DesktopClient.ViewModels.Patient
             }
         }
 
-
+        /// <summary>
+        /// Loads the appropriate patients based on the current user's role.
+        /// </summary>
+        /// <returns>A task representing the asynchronous operation.</returns>
+        /// <remarks>
+        /// For doctors, this method loads only patients associated with their appointments.
+        /// For administrators, it loads all patients in the system.
+        /// </remarks>
         private async Task LoadPatientsAsync()
         {
             try
@@ -81,12 +141,17 @@ namespace HMS.DesktopClient.ViewModels.Patient
             }
         }
 
+        /// <summary>
+        /// Raises the <see cref="PropertyChanged"/> event for the specified property.
+        /// </summary>
+        /// <param name="propertyName">The name of the property that changed.</param>
+        /// <remarks>
+        /// This method is called by property setters to notify the UI when values change,
+        /// enabling proper UI updates via data binding.
+        /// </remarks>
         protected virtual void OnPropertyChanged(string propertyName)
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
-
-
-
     }
 }

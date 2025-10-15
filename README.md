@@ -13,4 +13,3 @@ To apply migrations: `dotnet ef database update` (assuming you have the necessar
 
 DATABASE STRUCTURE: (look into models)  
   
-![image](https://github.com/user-attachments/assets/897c1ded-f2d3-4760-9f2c-cf16ac5b38f2)
